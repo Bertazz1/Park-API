@@ -1,4 +1,5 @@
 package com.Bertazz1.demo_park_api.service;
+import java.util.List;
 
 
 import com.Bertazz1.demo_park_api.repository.UserRepository;
@@ -29,5 +30,10 @@ public class UserService {
         User user = findById(id);
         user.setPassword(newPassword);
         return user;
+    }
+
+    @Transactional(readOnly = true)
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 }
