@@ -23,4 +23,11 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(() ->
             new RuntimeException("User not found with id: " + id));
     }
+
+    @Transactional
+    public User updatePassword(Long id, String newPassword) {
+        User user = findById(id);
+        user.setPassword(newPassword);
+        return user;
+    }
 }
