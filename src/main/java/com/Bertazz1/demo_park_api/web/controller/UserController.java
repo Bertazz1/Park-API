@@ -3,6 +3,7 @@ package com.Bertazz1.demo_park_api.web.controller;
 import com.Bertazz1.demo_park_api.entity.User;
 import com.Bertazz1.demo_park_api.service.UserService;
 import com.Bertazz1.demo_park_api.web.dto.UserCreateDto;
+import com.Bertazz1.demo_park_api.web.dto.UserPasswordDtio;
 import com.Bertazz1.demo_park_api.web.dto.UserResposeDto;
 import com.Bertazz1.demo_park_api.web.dto.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
@@ -34,12 +35,12 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.findAll();
-        return ResponseEntity.ok(users);
+        return ResponseEntity.ok(users);    
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<User> updatePassword(@PathVariable Long id,@RequestBody User user) {
-        User savedUser = userService.updatePassword(id, user.getPassword());
-        return ResponseEntity.ok(savedUser);
+    public ResponseEntity<Void> updatePassword(@PathVariable Long id,@RequestBody UserPasswordDtio dto) {
+        User savedUser = userService.updatePassword(id, dto.getOldPassword(), dto.getNewPassword(), dto.getConfirmNewPassword());
+        return ResponseEntity.noContent().build();
     }
 }

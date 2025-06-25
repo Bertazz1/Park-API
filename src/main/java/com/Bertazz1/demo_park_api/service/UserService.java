@@ -26,8 +26,16 @@ public class UserService {
     }
 
     @Transactional
-    public User updatePassword(Long id, String newPassword) {
+    public User updatePassword(Long id, String oldPassword, String newPassword, String confirmNewPassword) {
+        if (!newPassword.equals(confirmNewPassword)) {
+            throw new RuntimeException("The new password is different from the password confirmation");
+        }
+
         User user = findById(id);
+        if (!user.getPassword().equals(oldPassword)){
+            throw new RuntimeException("Your password does not match");
+
+        }
         user.setPassword(newPassword);
         return user;
     }
