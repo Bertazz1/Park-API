@@ -6,7 +6,9 @@ import com.Bertazz1.demo_park_api.web.dto.UserResposeDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 
+import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 public class UserMapper {
 
@@ -25,5 +27,10 @@ public class UserMapper {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.addMappings(propertyMap);
         return modelMapper.map(user, UserResposeDto.class);
+    }
+
+    public static List<UserResposeDto> toListDto(List<User> users) {
+        return users.stream()
+                .map(User -> toDto(User)).collect(Collectors.toList());
     }
 }
