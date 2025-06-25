@@ -2,6 +2,9 @@ package com.Bertazz1.demo_park_api.web.controller;
 
 import com.Bertazz1.demo_park_api.entity.User;
 import com.Bertazz1.demo_park_api.service.UserService;
+import com.Bertazz1.demo_park_api.web.dto.UserCreateDto;
+import com.Bertazz1.demo_park_api.web.dto.UserResposeDto;
+import com.Bertazz1.demo_park_api.web.dto.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +20,9 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        User savedUser = userService.createUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    public ResponseEntity<UserResposeDto> createUser(@RequestBody UserCreateDto userCreateDto) {
+        User savedUser = userService.createUser(UserMapper.toUser(userCreateDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(UserMapper.toDto(savedUser));
     }
 
     @GetMapping("/{id}")
