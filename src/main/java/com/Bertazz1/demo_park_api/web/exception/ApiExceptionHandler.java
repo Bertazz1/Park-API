@@ -1,6 +1,7 @@
 package com.Bertazz1.demo_park_api.web.exception;
 
 import com.Bertazz1.demo_park_api.exception.EntityNotFoundException;
+import com.Bertazz1.demo_park_api.exception.PasswordInvalidException;
 import com.Bertazz1.demo_park_api.exception.UsernameUniqueException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -44,11 +45,22 @@ public class ApiExceptionHandler {
     public ResponseEntity<ErrorMessage> entityNotFoundException(RuntimeException ex,
                                                                         HttpServletRequest request) {
         log.error("Api Error - ", ex);
-        return ResponseEntity.status(HttpStatus.CONFLICT)
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorMessage(request,
                         HttpStatus.NOT_FOUND,
                          ex.getMessage()));
+    }
+
+    @ExceptionHandler(PasswordInvalidException.class)
+    public ResponseEntity<ErrorMessage> passwordInvalidException(RuntimeException ex,
+                                                                HttpServletRequest request) {
+        log.error("Api Error - ", ex);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request,
+                        HttpStatus.BAD_REQUEST,
+                        ex.getMessage()));
     }
 }
 

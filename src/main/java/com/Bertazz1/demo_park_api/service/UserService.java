@@ -3,6 +3,7 @@ import java.util.List;
 
 
 import com.Bertazz1.demo_park_api.exception.EntityNotFoundException;
+import com.Bertazz1.demo_park_api.exception.PasswordInvalidException;
 import com.Bertazz1.demo_park_api.exception.UsernameUniqueException;
 import com.Bertazz1.demo_park_api.repository.UserRepository;
 import com.Bertazz1.demo_park_api.entity.User;
@@ -36,12 +37,12 @@ public class UserService {
     @Transactional
     public User updatePassword(Long id, String oldPassword, String newPassword, String confirmNewPassword) {
         if (!newPassword.equals(confirmNewPassword)) {
-            throw new RuntimeException("The new password is different from the password confirmation");
+            throw new PasswordInvalidException("The new password is different from the password confirmation");
         }
 
         User user = findById(id);
         if (!user.getPassword().equals(oldPassword)){
-            throw new RuntimeException("Your password does not match");
+            throw new PasswordInvalidException("Your password does not match");
 
         }
         user.setPassword(newPassword);
