@@ -1,5 +1,6 @@
 package com.Bertazz1.demo_park_api.web.exception;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.*;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,8 @@ public class ErrorMessage {
 
     private String message;
 
-    private Map<String, String> erros;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private Map<String, String> errors;
 
     public ErrorMessage(HttpServletRequest request, HttpStatus status, String message) {
         this.path = request.getRequestURI();
@@ -41,7 +43,7 @@ public class ErrorMessage {
     }
 
     private void addErros(BindingResult bindingResult) {
-        this.erros = bindingResult.getFieldErrors().stream()
+        this.errors = bindingResult.getFieldErrors().stream()
                 .collect(Collectors.toMap(
                         fieldError -> fieldError.getField(),
                         fieldError -> fieldError.getDefaultMessage()
