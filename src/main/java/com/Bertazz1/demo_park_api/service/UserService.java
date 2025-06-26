@@ -2,6 +2,7 @@ package com.Bertazz1.demo_park_api.service;
 import java.util.List;
 
 
+import com.Bertazz1.demo_park_api.exception.EntityNotFoundException;
 import com.Bertazz1.demo_park_api.exception.UsernameUniqueException;
 import com.Bertazz1.demo_park_api.repository.UserRepository;
 import com.Bertazz1.demo_park_api.entity.User;
@@ -29,7 +30,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public User findById(Long id) {
         return userRepository.findById(id).orElseThrow(() ->
-            new RuntimeException("User not found with id: " + id));
+            new EntityNotFoundException(String.format("User with id=%s not found ",id)));
     }
 
     @Transactional
