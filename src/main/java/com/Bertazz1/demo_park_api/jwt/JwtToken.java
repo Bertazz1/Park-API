@@ -1,7 +1,14 @@
 package com.Bertazz1.demo_park_api.jwt;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@No
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter @Setter
 public class JwtToken {
+    private  String token;
 }

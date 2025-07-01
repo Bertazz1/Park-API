@@ -8,6 +8,7 @@ import com.Bertazz1.demo_park_api.exception.UsernameUniqueException;
 import com.Bertazz1.demo_park_api.repository.UserRepository;
 import com.Bertazz1.demo_park_api.entity.User;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,10 +18,12 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public User createUser(User user) {
         try {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             return userRepository.save(user);
         } catch (DataIntegrityViolationException ex) {
             throw new UsernameUniqueException(String.format("Username '%s' is already in use", user.getUsername()));
@@ -41,16 +44,28 @@ public class UserService {
         }
 
         User user = findById(id);
-        if (!user.getPassword().equals(oldPassword)){
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
             throw new PasswordInvalidException("Your password does not match");
 
         }
-        user.setPassword(newPassword);
+        user.setPassword(passwordEncoder.encode(newPassword));
         return user;
     }
 
     @Transactional(readOnly = true)
     public List<User> findAll() {
         return userRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() ->
+                new EntityNotFoundException(String.format("User with username=%s not found ",username)));
+
+    }
+    @Transactional(readOnly = true)
+    public User.Role findRoleByUsername(String username) {
+       return userRepository.findRoleByUsername(username);
+
     }
 }

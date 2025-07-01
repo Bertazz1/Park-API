@@ -3,7 +3,7 @@ package com.Bertazz1.demo_park_api.web.controller;
 import com.Bertazz1.demo_park_api.entity.User;
 import com.Bertazz1.demo_park_api.service.UserService;
 import com.Bertazz1.demo_park_api.web.dto.UserCreateDto;
-import com.Bertazz1.demo_park_api.web.dto.UserPasswordDtio;
+import com.Bertazz1.demo_park_api.web.dto.UserPasswordDto;
 import com.Bertazz1.demo_park_api.web.dto.UserResposeDto;
 import com.Bertazz1.demo_park_api.web.dto.mapper.UserMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -106,7 +106,7 @@ public class UserController {
             })
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> updatePassword(@Valid @PathVariable Long id,@RequestBody UserPasswordDtio dto) {
+    public ResponseEntity<Void> updatePassword(@Valid @PathVariable Long id,@RequestBody UserPasswordDto dto) {
         User savedUser = userService.updatePassword(id, dto.getOldPassword(), dto.getNewPassword(), dto.getConfirmNewPassword());
         return ResponseEntity.noContent().build();
     }

@@ -1,0 +1,54 @@
+package com.Bertazz1.demo_park_api.jwt;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+
+public class JwtAuthorizationFilter extends OncePerRequestFilter {
+
+    @Autowired
+    private JwtUserDetailsService jwtUserDetailsService;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
+        final String token = request.getHeader(JwtUtis.JWT_AUTHORIZATION);
+        if (token == null || token.startsWith(JwtUtis.JWT_BEARER)) {
+            logger.info("JWT Token not found or invalid in request header");
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (!JwtUtis.isTokenValid(token)){
+            logger.warn("JWT Token is invalid");
+            filterChain.doFilter(request, response);
+            return;
+        }
+        String username = JwtUtis.getUsernameFromToken(token);
+
+        toAuthentication(request, username);
+
+        filterChain.doFilter(request, response);
+    }
+
+
+    private void toAuthentication(HttpServletRequest request, String username) {
+        UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(username);
+
+        UsernamePasswordAuthenticationToken authenticationToken = UsernamePasswordAuthenticationToken
+                .authenticated(userDetails, null, userDetails.getAuthorities());
+
+        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+    }
+}
