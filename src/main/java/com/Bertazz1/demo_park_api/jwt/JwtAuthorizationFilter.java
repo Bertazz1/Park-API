@@ -22,7 +22,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         final String token = request.getHeader(JwtUtis.JWT_AUTHORIZATION);
-        if (token == null || token.startsWith(JwtUtis.JWT_BEARER)) {
+        if (token == null || !token.startsWith(JwtUtis.JWT_BEARER)) {
             logger.info("JWT Token not found or invalid in request header");
             filterChain.doFilter(request, response);
             return;

@@ -3,14 +3,17 @@ package com.Bertazz1.demo_park_api.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@EntityListeners(AuditingEntityListener.class)
 @Getter @Setter @NoArgsConstructor
-@Entity
+@Entity(name = "User")
 @Table(name = "users")
 public class User implements Serializable {
 
@@ -31,15 +34,19 @@ public class User implements Serializable {
     @Column(name = "role", nullable = false,length = 25)
     private Role role = Role.ROLE_CLIENT;
 
+    @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @CreatedBy
     @Column(name = "created_by")
     private String createdBy;
 
+    @LastModifiedBy
     @Column(name = "updated_by")
     private String updatedBy;
 

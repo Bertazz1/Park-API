@@ -29,6 +29,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
                         .anyRequest().authenticated()
                 ).sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
