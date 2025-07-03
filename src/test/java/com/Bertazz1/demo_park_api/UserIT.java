@@ -26,6 +26,7 @@ public class UserIT {
     public void testCreateUser_ReturnUserCreatedWithStatus201() {
        UserResposeDto responseBody = testClient.post()
                 .uri("/api/v1/users")
+               .headers(JwtAuthentication.getHeaderAuthorization(testClient,"joao@gmail.com","123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserCreateDto("testUser@gmail.com", "123456"))
                 .exchange()
@@ -41,6 +42,7 @@ public class UserIT {
     public void testCreateUser_TestEmailValidation_ReturnErrorMessageStatus422() {
         ErrorMessage responseBody = testClient.post()
                 .uri("/api/v1/users")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient,"joao@gmail.com","123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserCreateDto("", "123456"))
                 .exchange()
@@ -53,6 +55,7 @@ public class UserIT {
 
         responseBody = testClient.post()
                 .uri("/api/v1/users")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient,"joao@gmail.com","123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserCreateDto("testUser", "123456"))
                 .exchange()
@@ -65,6 +68,7 @@ public class UserIT {
 
         responseBody = testClient.post()
                 .uri("/api/v1/users")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient,"joao@gmail.com","123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserCreateDto("testUser@gmail", "123456"))
                 .exchange()
@@ -79,6 +83,7 @@ public class UserIT {
         public void testCreateUser_TestPasswordValidation_ReturnErrorMessageStatus422() {
         ErrorMessage responseBody = testClient.post()
                 .uri("/api/v1/users")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient,"joao@gmail.com","123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserCreateDto("testUser@gmail.com", ""))
                 .exchange()
@@ -91,6 +96,7 @@ public class UserIT {
 
         responseBody = testClient.post()
                 .uri("/api/v1/users")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient,"joao@gmail.com","123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserCreateDto("testUser@gmail.com", "123"))
                 .exchange()
@@ -103,6 +109,7 @@ public class UserIT {
 
         responseBody = testClient.post()
                 .uri("/api/v1/users")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient,"joao@gmail.com","123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserCreateDto("testUser@gmail.com", "123456789"))
                 .exchange()
@@ -118,6 +125,7 @@ public class UserIT {
             List<UserResposeDto> responseBody = testClient
                 .get()
                 .uri("api/v1/users")
+                    .headers(JwtAuthentication.getHeaderAuthorization(testClient,"joao@gmail.com","123456"))
                 .exchange()
                 .expectStatus().isOk()
                 .expectBodyList(UserResposeDto.class)
@@ -130,7 +138,7 @@ public class UserIT {
             UserResposeDto responseBody = testClient
                 .get()
                 .uri("api/v1/users/100")
-                .headers(JwtAuthentication.getHeaderAuthorization(testClient,"joao@gmail.com","123456))
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient,"joao@gmail.com","123456"))
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(UserResposeDto.class)
