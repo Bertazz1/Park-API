@@ -6,11 +6,13 @@ import com.Bertazz1.demo_park_api.web.dto.UserCreateDto;
 import com.Bertazz1.demo_park_api.web.dto.UserPasswordDto;
 import com.Bertazz1.demo_park_api.web.dto.UserResposeDto;
 import com.Bertazz1.demo_park_api.web.dto.mapper.UserMapper;
+import com.Bertazz1.demo_park_api.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,15 +37,15 @@ public class UserController {
             @ApiResponse(responseCode = "201",
                     description = "User created successfully",
                     content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = UserResposeDto.class))),
+                    schema = @Schema(implementation = ErrorMessage.class))),
             @ApiResponse(responseCode = "409",
                     description = "Username already exists",
                     content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = UserResposeDto.class))),
+                    schema = @Schema(implementation = ErrorMessage.class))),
             @ApiResponse(responseCode = "422",
                     description = "Invalid input data",
                     content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = UserResposeDto.class)))
+                    schema = @Schema(implementation = ErrorMessage.class)))
     })
 
     @PostMapping
@@ -53,15 +55,20 @@ public class UserController {
     }
 
     @Operation(summary = "Find user by id", description = "Finds a user by their ID",
+            security = @SecurityRequirement(name = "security"),
             responses = {
             @ApiResponse(responseCode = "200",
                     description = "User find successfully",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserResposeDto.class))),
+                            schema = @Schema(implementation = ErrorMessage.class))),
             @ApiResponse(responseCode = "404",
                     description = "User not found",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserResposeDto.class))),
+                            schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "403",
+                            description = "Access denied",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessage.class))),
 
     })
     @GetMapping("/{id}")
@@ -72,41 +79,53 @@ public class UserController {
     }
 
     @Operation(summary = "Get all users", description = "Retrieves a list of all users",
+            security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(responseCode = "200",
                             description = "Users retrieved successfully",
                             content = @Content(mediaType = "application/json",
-                                    array = @ArraySchema(schema = @Schema(implementation = UserResposeDto.class)))),
+                                    array = @ArraySchema(schema = @Schema(implementation = ErrorMessage.class)))),
                     @ApiResponse(responseCode = "404",
                             description = "No users found",
                             content = @Content(mediaType = "application/json",
-                                  schema = @Schema(implementation = UserResposeDto.class)))
+                                  schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "403",
+                            description = "Access denied",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessage.class))),
             })
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserResposeDto>> getAllUsers() {
         List<User> users = userService.findAll();
         return ResponseEntity.ok(UserMapper.toListDto(users));
     }
 
     @Operation(summary = "Find user by id", description = "Finds a user by their ID",
+            security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(responseCode = "204",
                             description = "User password updated successfully",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = UserResposeDto.class))),
+                                    schema = @Schema(implementation = ErrorMessage.class))),
                     @ApiResponse(responseCode = "404",
                             description = "User not found",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = UserResposeDto.class))),
+                                    schema = @Schema(implementation = ErrorMessage.class))),
                     @ApiResponse(responseCode = "400",
                             description = "Invalid input data",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = UserResposeDto.class)))
+                                    schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "403",
+                            description = "Access denied",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessage.class))),
 
             })
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENT') AND #id == authentication.principal.id")
     public ResponseEntity<Void> updatePassword(@Valid @PathVariable Long id,@RequestBody UserPasswordDto dto) {
         User savedUser = userService.updatePassword(id, dto.getOldPassword(), dto.getNewPassword(), dto.getConfirmNewPassword());
         return ResponseEntity.noContent().build();
