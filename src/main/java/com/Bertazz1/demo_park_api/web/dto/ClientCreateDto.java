@@ -2,6 +2,7 @@ package com.Bertazz1.demo_park_api.web.dto;
 
 
 import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -16,7 +17,7 @@ import org.hibernate.validator.constraints.br.CPF;
 @Setter
 public class ClientCreateDto {
 
-    @NotNull
+    @NotBlank
     @Size(min = 5, max = 100)
     private String name;
 
