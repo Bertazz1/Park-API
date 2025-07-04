@@ -59,8 +59,8 @@ public class ClientIT {
                 .post()
                 .uri("/api/v1/clients")
                 .contentType(MediaType.APPLICATION_JSON)
-                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "toby@gmail.com", "123456"))
-                .bodyValue(new ClientCreateDto("", ""))
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "joao@gmail.com", "123456"))
+                .bodyValue(new ClientCreateDto("Tobyas", "00000000000"))
                 .exchange()
                 .expectStatus().isEqualTo(422)
                 .expectBody(ErrorMessage.class)
@@ -72,7 +72,7 @@ public class ClientIT {
             .post()
             .uri("/api/v1/clients")
                 .contentType(MediaType.APPLICATION_JSON)
-                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "toby@gmail.com", "123456"))
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "joao@gmail.com", "123456"))
             .bodyValue(new ClientCreateDto("Toby", "00000000000"))
             .exchange()
                 .expectStatus().isEqualTo(422)
@@ -85,7 +85,7 @@ public class ClientIT {
                 .post()
                 .uri("/api/v1/clients")
                 .contentType(MediaType.APPLICATION_JSON)
-                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "toby@gmail.com", "123456"))
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "joao@gmail.com", "123456"))
                 .bodyValue(new ClientCreateDto("Tobyas", "879.531.620-59"))
                 .exchange()
                 .expectStatus().isEqualTo(422)
@@ -109,5 +109,51 @@ public class ClientIT {
                 .returnResult().getResponseBody();
         org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
         org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(409);
+    }
+
+    @Test
+    public void testFindClient_WithExistingIdByAdmin_ReturnClientWithStatus200() {
+        ClientResponseDto responseBody = testClient
+                .get()
+                .uri("/api/v1/clients/10")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "joao@gmail.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(ClientResponseDto.class)
+                .returnResult().getResponseBody();
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getId()).isEqualTo(10);
+
+    }
+    @Test
+    public void testFindClient_WithNoExistingIdByAdmin_ReturnErroWithStatus404() {
+        ErrorMessage responseBody = testClient
+                .get()
+                .uri("/api/v1/clients/0")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "joao@gmail.com", "123456"))
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(404);
+
+
+
+    }
+
+    @Test
+    public void testFindClient_WithExistingIdByClient_ReturnErrorWithStatus403() {
+        ErrorMessage responseBody = testClient
+                .get()
+                .uri("/api/v1/clients/100")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "pedro@gmail.com", "123456"))
+                .exchange()
+                .expectStatus().isEqualTo(403)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(403);
+
     }
 }

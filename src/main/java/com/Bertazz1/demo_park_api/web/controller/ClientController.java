@@ -13,15 +13,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -58,5 +56,29 @@ public class ClientController {
         client.setUser(userService.findById(userDetails.getId()));
         clientService.createClient(client);
         return ResponseEntity.status(201).body(ClientMapper.toDto(client));
+    }
+
+    @Operation(summary = "Find client by id", description = "Finds a client by their ID",
+            security = @SecurityRequirement(name = "security"),
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "Client find successfully",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "404",
+                            description = "Client not found",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "403",
+                            description = "Access denied",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessage.class))),
+
+            })
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public  ResponseEntity<ClientResponseDto> findById(@PathVariable Long id) {
+        Client client = clientService.findById(id);
+        return ResponseEntity.ok(ClientMapper.toDto(client));
     }
 }

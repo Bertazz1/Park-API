@@ -3,6 +3,7 @@ package com.Bertazz1.demo_park_api.service;
 
 import com.Bertazz1.demo_park_api.entity.Client;
 import com.Bertazz1.demo_park_api.exception.CpfUniqueViolationException;
+import com.Bertazz1.demo_park_api.exception.EntityNotFoundException;
 import com.Bertazz1.demo_park_api.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -25,5 +26,10 @@ public class ClientService {
             throw new CpfUniqueViolationException(
                 String.format("CPF '%s' is already in use", client.getCpf()));
         }
+    }
+    @Transactional
+    public Client findById(Long id) {
+        return clientRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Client not found with id: " + id));
     }
 }
