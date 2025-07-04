@@ -2,7 +2,7 @@ package com.Bertazz1.demo_park_api;
 
 
 import com.Bertazz1.demo_park_api.web.dto.UserCreateDto;
-import com.Bertazz1.demo_park_api.web.dto.UserResposeDto;
+import com.Bertazz1.demo_park_api.web.dto.UserResponseDto;
 import com.Bertazz1.demo_park_api.web.exception.ErrorMessage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +24,14 @@ public class UserIT {
 
     @Test
     public void testCreateUser_ReturnUserCreatedWithStatus201() {
-       UserResposeDto responseBody = testClient.post()
+       UserResponseDto responseBody = testClient.post()
                 .uri("/api/v1/users")
                .headers(JwtAuthentication.getHeaderAuthorization(testClient,"joao@gmail.com","123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserCreateDto("testUser@gmail.com", "123456"))
                 .exchange()
                 .expectStatus().isCreated()
-                .expectBody(UserResposeDto.class)
+                .expectBody(UserResponseDto.class)
                 .returnResult().getResponseBody();
 
        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
@@ -122,26 +122,26 @@ public class UserIT {
     }
     @Test
     public void findAllUsers_WithExistingId_ReturnUsers_WithStatus200() {
-            List<UserResposeDto> responseBody = testClient
+            List<UserResponseDto> responseBody = testClient
                 .get()
                 .uri("api/v1/users")
                     .headers(JwtAuthentication.getHeaderAuthorization(testClient,"joao@gmail.com","123456"))
                 .exchange()
                 .expectStatus().isOk()
-                .expectBodyList(UserResposeDto.class)
+                .expectBodyList(UserResponseDto.class)
                 .returnResult().getResponseBody();
         org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
     }
 
     @Test
     public void findUser_WithExistingId_ReturnUser_WithStatus200() {
-            UserResposeDto responseBody = testClient
+            UserResponseDto responseBody = testClient
                 .get()
                 .uri("api/v1/users/100")
                 .headers(JwtAuthentication.getHeaderAuthorization(testClient,"joao@gmail.com","123456"))
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(UserResposeDto.class)
+                .expectBody(UserResponseDto.class)
                 .returnResult().getResponseBody();
         org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
         org.assertj.core.api.Assertions.assertThat(responseBody.getId()).isEqualTo(100);
@@ -154,7 +154,7 @@ public class UserIT {
                 .headers(JwtAuthentication.getHeaderAuthorization(testClient,"maria@gmail.com","123456"))
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(UserResposeDto.class)
+                .expectBody(UserResponseDto.class)
                 .returnResult().getResponseBody();
         org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
         org.assertj.core.api.Assertions.assertThat(responseBody.getId()).isEqualTo(101);
@@ -167,7 +167,7 @@ public class UserIT {
                 .headers(JwtAuthentication.getHeaderAuthorization(testClient,"pedro@gmail.com","123456"))
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(UserResposeDto.class)
+                .expectBody(UserResponseDto.class)
                 .returnResult().getResponseBody();
         org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
         org.assertj.core.api.Assertions.assertThat(responseBody.getId()).isEqualTo(102);

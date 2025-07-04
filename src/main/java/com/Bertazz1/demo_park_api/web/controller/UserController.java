@@ -4,7 +4,7 @@ import com.Bertazz1.demo_park_api.entity.User;
 import com.Bertazz1.demo_park_api.service.UserService;
 import com.Bertazz1.demo_park_api.web.dto.UserCreateDto;
 import com.Bertazz1.demo_park_api.web.dto.UserPasswordDto;
-import com.Bertazz1.demo_park_api.web.dto.UserResposeDto;
+import com.Bertazz1.demo_park_api.web.dto.UserResponseDto;
 import com.Bertazz1.demo_park_api.web.dto.mapper.UserMapper;
 import com.Bertazz1.demo_park_api.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,7 +49,7 @@ public class UserController {
     })
 
     @PostMapping
-    public ResponseEntity<UserResposeDto> createUser(@Valid @RequestBody UserCreateDto userCreateDto) {
+    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserCreateDto userCreateDto) {
         User savedUser = userService.createUser(UserMapper.toUser(userCreateDto));
         return ResponseEntity.status(HttpStatus.CREATED).body(UserMapper.toDto(savedUser));
     }
@@ -73,7 +73,7 @@ public class UserController {
     })
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') OR (hasRole('CLIENT') AND #id == authentication.principal.id)")
-    public ResponseEntity<UserResposeDto> getById(@Valid @PathVariable Long id) {
+    public ResponseEntity<UserResponseDto> getById(@Valid @PathVariable Long id) {
         User savedUser = userService.findById(id);
         return ResponseEntity.ok(UserMapper.toDto(savedUser));
     }
@@ -96,8 +96,8 @@ public class UserController {
             })
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<UserResposeDto>> getAllUsers() {
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
+    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
         List<User> users = userService.findAll();
         return ResponseEntity.ok(UserMapper.toListDto(users));
     }

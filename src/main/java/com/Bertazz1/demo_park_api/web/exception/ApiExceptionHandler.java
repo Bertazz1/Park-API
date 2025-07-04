@@ -1,5 +1,6 @@
 package com.Bertazz1.demo_park_api.web.exception;
 
+import com.Bertazz1.demo_park_api.exception.CpfUniqueViolationException;
 import com.Bertazz1.demo_park_api.exception.EntityNotFoundException;
 import com.Bertazz1.demo_park_api.exception.PasswordInvalidException;
 import com.Bertazz1.demo_park_api.exception.UsernameUniqueException;
@@ -31,7 +32,7 @@ public class ApiExceptionHandler {
                         "Validation error", result));
     }
 
-    @ExceptionHandler(UsernameUniqueException.class)
+    @ExceptionHandler({UsernameUniqueException.class, CpfUniqueViolationException.class})
     public ResponseEntity<ErrorMessage> uniqueViolationException(RuntimeException ex,
                                                                         HttpServletRequest request) {
         log.error("Api Error - ", ex);
