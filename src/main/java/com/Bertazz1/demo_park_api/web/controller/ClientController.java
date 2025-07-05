@@ -14,6 +14,7 @@ import com.Bertazz1.demo_park_api.web.dto.mapper.PageableMapper;
 import com.Bertazz1.demo_park_api.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -45,9 +47,8 @@ public class ClientController {
             security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(responseCode = "201",
-                            description = "Client created successfully",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ClientResponseDto.class))),
+                            headers = @Header(name = HttpHeaders.LOCATION,description = "Client location"),
+                            description = "Client created successfully"),
                     @ApiResponse(responseCode = "409",
                             description = "Client already exists",
                             content = @Content(mediaType = "application/json",

@@ -8,6 +8,7 @@ import com.Bertazz1.demo_park_api.web.dto.UserResponseDto;
 import com.Bertazz1.demo_park_api.web.dto.mapper.UserMapper;
 import com.Bertazz1.demo_park_api.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,6 +17,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,9 +37,8 @@ public class UserController {
     @Operation(summary = "Create a new user", description = "Creates a new user with the provided details",
             responses = {
             @ApiResponse(responseCode = "201",
-                    description = "User created successfully",
-                    content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = UserResponseDto.class))),
+                    headers = @Header(name = HttpHeaders.LOCATION,description = "User space location"),
+                    description = "User created successfully"),
             @ApiResponse(responseCode = "409",
                     description = "Username already exists",
                     content = @Content(mediaType = "application/json",

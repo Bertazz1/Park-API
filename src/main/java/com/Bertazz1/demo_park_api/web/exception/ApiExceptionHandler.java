@@ -1,9 +1,6 @@
 package com.Bertazz1.demo_park_api.web.exception;
 
-import com.Bertazz1.demo_park_api.exception.CpfUniqueViolationException;
-import com.Bertazz1.demo_park_api.exception.EntityNotFoundException;
-import com.Bertazz1.demo_park_api.exception.PasswordInvalidException;
-import com.Bertazz1.demo_park_api.exception.UsernameUniqueException;
+import com.Bertazz1.demo_park_api.exception.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,7 +27,7 @@ public class ApiExceptionHandler {
                         "Validation error", result));
     }
 
-    @ExceptionHandler({UsernameUniqueException.class, CpfUniqueViolationException.class})
+    @ExceptionHandler({UsernameUniqueException.class, CpfUniqueViolationException.class, CodeUniqueViolationException.class})
     public ResponseEntity<ErrorMessage> uniqueViolationException(RuntimeException ex,
                                                                         HttpServletRequest request) {
         log.error("Api Error - ", ex);

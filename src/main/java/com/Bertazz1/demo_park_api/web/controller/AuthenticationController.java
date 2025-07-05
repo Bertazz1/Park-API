@@ -6,6 +6,7 @@ import com.Bertazz1.demo_park_api.jwt.JwtUserDetailsService;
 import com.Bertazz1.demo_park_api.web.dto.UserLoginDto;
 import com.Bertazz1.demo_park_api.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,9 +39,8 @@ public class AuthenticationController {
     @Operation(summary = "Authenticate", description = " Authenticates a user and returns a JWT token",
             responses = {
                     @ApiResponse(responseCode = "201",
-                            description = "User authenticated successfully",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorMessage.class))),
+                            headers = @Header(name = HttpHeaders.LOCATION,description = "Authentication location"),
+                            description = "Authenticated successfully"),
                     @ApiResponse(responseCode = "400",
                             description = "Invalid username or password",
                             content = @Content(mediaType = "application/json",
