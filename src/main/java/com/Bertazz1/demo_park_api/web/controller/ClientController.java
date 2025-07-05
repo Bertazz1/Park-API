@@ -47,7 +47,7 @@ public class ClientController {
                     @ApiResponse(responseCode = "201",
                             description = "Client created successfully",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorMessage.class))),
+                                    schema = @Schema(implementation = ClientResponseDto.class))),
                     @ApiResponse(responseCode = "409",
                             description = "Client already exists",
                             content = @Content(mediaType = "application/json",
@@ -76,7 +76,7 @@ public class ClientController {
                     @ApiResponse(responseCode = "200",
                             description = "Client find successfully",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorMessage.class))),
+                                    schema = @Schema(implementation = ClientResponseDto.class))),
                     @ApiResponse(responseCode = "404",
                             description = "Client not found",
                             content = @Content(mediaType = "application/json",
@@ -112,7 +112,7 @@ public class ClientController {
                     @ApiResponse(responseCode = "200",
                             description = "Clients find successfully",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorMessage.class))),
+                                    schema = @Schema(implementation = ClientResponseDto.class))),
 
                     @ApiResponse(responseCode = "403",
                             description = "Access denied",
@@ -125,5 +125,26 @@ public class ClientController {
     public  ResponseEntity<PageableDto> findAll(@Parameter(hidden = true)@PageableDefault(size = 5, sort = {"name"}) Pageable pageable) {
         Page<ClientProjection> clients = clientService.findAll(pageable);
         return ResponseEntity.ok(PageableMapper.toDto(clients));
+    }
+
+    @Operation(summary = "Find client details by user authenticated", description = "Finds client details by user, acess is restricted to users with the CLIENT role.",
+            security = @SecurityRequirement(name = "security"),
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "Client find successfully",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ClientResponseDto.class))),
+                    @ApiResponse(responseCode = "403",
+                            description = "Access denied",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessage.class))),
+
+            })
+
+    @GetMapping("/details")
+    @PreAuthorize("hasRole('CLIENT')")
+    public  ResponseEntity<ClientResponseDto> getDetails(@AuthenticationPrincipal JwtUserDetails userDetails){
+       Client client = clientService.findByUserId(userDetails.getId());
+        return ResponseEntity.ok(ClientMapper.toDto(client));
     }
 }
