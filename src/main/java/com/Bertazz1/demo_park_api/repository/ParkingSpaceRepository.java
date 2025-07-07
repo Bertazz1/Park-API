@@ -8,4 +8,6 @@ public interface ParkingSpaceRepository extends JpaRepository<ParkingSpace, Long
 
 
     Optional<ParkingSpace> findByCode(String code);
+
+    Optional<ParkingSpace> findFirstByStatus(ParkingSpace.StatusParking statusParking);
 }

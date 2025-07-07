@@ -49,4 +49,10 @@ public class ClientService {
         return clientRepository.findByUserId(id);
 
     }
+
+@Transactional(readOnly = true)
+    public Client findByCpf(String cpf) {
+        return clientRepository.findByCpf(cpf)
+                .orElseThrow(() -> new EntityNotFoundException("Client not found with CPF: " + cpf));
+    }
 }
