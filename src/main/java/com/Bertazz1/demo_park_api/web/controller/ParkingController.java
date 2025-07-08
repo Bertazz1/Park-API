@@ -2,11 +2,15 @@ package com.Bertazz1.demo_park_api.web.controller;
 
 
 import com.Bertazz1.demo_park_api.entity.ClientSpace;
+import com.Bertazz1.demo_park_api.jwt.JwtUserDetails;
+import com.Bertazz1.demo_park_api.repository.projection.ClientSpaceProjection;
 import com.Bertazz1.demo_park_api.service.ClientSpaceService;
 import com.Bertazz1.demo_park_api.service.ParkingService;
+import com.Bertazz1.demo_park_api.web.dto.PageableDto;
 import com.Bertazz1.demo_park_api.web.dto.ParkingCreateDto;
 import com.Bertazz1.demo_park_api.web.dto.ParkingResponseDto;
 import com.Bertazz1.demo_park_api.web.dto.mapper.ClientSpaceMapper;
+import com.Bertazz1.demo_park_api.web.dto.mapper.PageableMapper;
 import com.Bertazz1.demo_park_api.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;
@@ -16,9 +20,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -83,6 +92,30 @@ public class ParkingController {
         ClientSpace clientSpace = parkingService.checkOut(receipt);
         ParkingResponseDto responseDto = ClientSpaceMapper.toDto(clientSpace);
         return ResponseEntity.ok(responseDto);
+    }
+
+    @GetMapping("/cpf/{cpf}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<PageableDto> getAllParkingByCpf(@PathVariable String cpf,
+                                                                 @PageableDefault(size = 5,sort = "entryTime",
+                                                                         direction = Sort.Direction.ASC)Pageable pageable) {
+        Page<ClientSpaceProjection> projection = clientSpaceService.findAllByCpf(cpf, pageable);
+        PageableDto dto = PageableMapper.toDto(projection);
+        return ResponseEntity.ok(dto);
+
+
+    }
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<PageableDto> getAllClientParking(@AuthenticationPrincipal JwtUserDetails user,
+                                                          @PageableDefault(size = 5,sort = "entryTime",
+                                                                  direction = Sort.Direction.ASC)Pageable pageable) {
+        Page<ClientSpaceProjection> projection = clientSpaceService.findAllByUserId(user.getId(), pageable);
+        PageableDto dto = PageableMapper.toDto(projection);
+        return ResponseEntity.ok(dto);
+
+
     }
 
 }
