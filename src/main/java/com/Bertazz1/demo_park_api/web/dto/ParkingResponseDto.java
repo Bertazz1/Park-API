@@ -1,6 +1,8 @@
 package com.Bertazz1.demo_park_api.web.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -17,6 +19,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ParkingResponseDto {
 
 
@@ -26,7 +29,9 @@ public class ParkingResponseDto {
     private String brand;
     private String color;
     private String receipt;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime entryTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime exitTime;
     private String parkingSpaceCode;
     private BigDecimal price;

@@ -4,16 +4,14 @@ package com.Bertazz1.demo_park_api.web.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.validator.constraints.br.CPF;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class ParkingCreateDto {
 
 
@@ -23,7 +21,7 @@ public class ParkingCreateDto {
     @CPF
     private String clientCpf;
     @NotBlank
-    @Size(min = 8,max = 8)
+    @Size(min = 7,max = 7)
     @Pattern(regexp = "^[A-Z]{3}[0-9]{4}$", message = "License plate must be in the format 'AAA0000'")
     private String licensePlate;
 
